@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .day-mode {
+      background-color: #f3f4f6; /* Light gray */
+    }
+    .night-mode {
+      background-color: #1f2937; /* Dark gray */
+      color: #d1d5db;
+    }
+  </style>
+</head>
+<body class="day-mode text-gray-800 flex items-center justify-center min-h-screen transition-colors duration-500 relative">
+
+  <!-- Night Mode Toggle Button -->
+  <button id="toggleButton" 
+          class="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-colors">
+    Night Mode: Off
+  </button>
+
+  <!-- Countdown Timer -->
+  <div id="countdown" class="text-center">
+    <h1 class="text-3xl font-semibold mb-6">Countdown Timer</h1>
+    <div class="flex justify-center gap-8 text-xl sm:text-2xl">
+      <div>
+        <span id="years" class="block text-4xl font-bold text-green-300">00</span>
+        <span class="text-green-300">Years</span>
+      </div>
+      <div>
+        <span id="months" class="block text-4xl font-bold text-green-300">00</span>
+        <span class="text-green-300">Months</span>
+      </div>
+      <div>
+        <span id="weeks" class="block text-4xl font-bold text-green-300">00</span>
+        <span class="text-green-300">Weeks</span>
+      </div>
+      <div>
+        <span id="days" class="block text-4xl font-bold text-green-300">00</span>
+        <span class="text-green-300">Days</span>
+      </div>
+      <div>
+        <span id="hours" class="block text-4xl font-bold text-green-300">00</span>
+        <span class="text-green-300">Hours</span>
+      </div>
+      <div>
+        <span id="minutes" class="block text-4xl font-bold text-green-300">00</span>
+        <span class="text-green-300">Minutes</span>
+      </div>
+      <div>
+        <span id="seconds" class="block text-4xl font-bold text-green-300">00</span>
+        <span class="text-green-300">Seconds</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const targetDate = new Date("2025-12-31T23:59:59").getTime(); // Set your target date here
+
+    // Load saved night mode preference from localStorage
+    let nightMode = localStorage.getItem('nightMode') === 'true'; 
+    const body = document.body;
+    const toggleButton = document.getElementById("toggleButton");
+
+    function updateMode() {
+      if (nightMode) {
+        body.classList.add("night-mode");
+        body.classList.remove("day-mode");
+        toggleButton.textContent = "Night Mode: On";
+      } else {
+        body.classList.add("day-mode");
+        body.classList.remove("night-mode");
+        toggleButton.textContent = "Night Mode: Off";
+      }
+    }
+
+    function toggleNightMode() {
+      nightMode = !nightMode;
+      // Save the user's night mode preference in localStorage
+      localStorage.setItem('nightMode', nightMode);
+      updateMode();
+    }
+
+    // Event Listener for the Night Mode Toggle Button
+    toggleButton.addEventListener("click", toggleNightMode);
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      const years = Math.floor(distance / (1000 * 60 * 60 * 24 * 365));
+      const months = Math.floor((distance % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+      const weeks = Math.floor((distance % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24 * 7));
+      const days = Math.floor((distance % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("years").textContent = String(years).padStart(2, '0');
+      document.getElementById("months").textContent = String(months).padStart(2, '0');
+      document.getElementById("weeks").textContent = String(weeks).padStart(2, '0');
+      document.getElementById("days").textContent = String(days).padStart(2, '0');
+      document.getElementById("hours").textContent = String(hours).padStart(2, '0');
+      document.getElementById("minutes").textContent = String(minutes).padStart(2, '0');
+      document.getElementById("seconds").textContent = String(seconds).padStart(2, '0');
+
+      if (distance < 0) {
+        clearInterval(interval);
+        document.getElementById("countdown").innerHTML = "<h1 class='text-3xl font-semibold text-red-500'>Countdown Finished!</h1>";
+      }
+    }
+
+    // Update countdown every second
+    const interval = setInterval(() => {
+      updateCountdown();
+    }, 1000);
+
+    // Initial setup
+    updateMode();
+    updateCountdown();
+  </script>
+
+
+</body>
+</html>
